@@ -1,7 +1,25 @@
+import { linkWithCredential, signInWithPopup } from "firebase/auth"
+import { auth, provider } from "../utlis/firebase"
+import axios from "axios"
 export default function Auth() {
-  const handleGoogleLogin = () => {
-    // Firebase Google Auth here
-    console.log("Google Login");
+  
+  const handleGoogleLogin =async () => {
+    try {
+      let res = await signInWithPopup(auth,provider)
+      let name = res.user.displayName
+      let email = res.user.email
+      console.log(name,email);
+      
+      let response =await axios.post("http://localhost:8000/api/auth/google",{name,email},{withCredentials:true})
+
+      if (response.data.success) {
+        alert(response.data.message)
+      }else{
+        alert(response.data.message)
+      }
+    } catch (error) {
+      alert(error.response.data.message)
+    }
   };
 
   return (
@@ -21,7 +39,7 @@ export default function Auth() {
           {/* Google Login Button */}
           <button
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 bg-white text-black font-semibold py-3 rounded-xl hover:bg-zinc-200 transition-all duration-300 hover:scale-[1.02]"
+            className="w-full flex items-center justify-center gap-3 bg-white text-black font-semibold py-3 rounded-xl hover:bg-zinc-200 transition-all duration-300 hover:scale-[1.02]  cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
